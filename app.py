@@ -34,8 +34,13 @@ st.markdown("""
 <style>
 /* Background */
 .stApp {
-    background: linear-gradient(135deg, #0f172a, #020617);
-    color: white;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #f1f5f9;
+}
+.block-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
 }
 
 /* Title styling */
@@ -74,7 +79,10 @@ h1 {
 
 /* Sidebar */
 [data-testid="stSidebar"] {
-    background: #020617;
+    background: #111827;
+}
+[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 /* Sidebar text color FIX */
 [data-testid="stSidebar"] * {
@@ -93,9 +101,28 @@ h1 {
     color: #e2e8f0 !important;
 }
 
+/* Mustard Sidebar */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #d4a017, #b8860b);
+    border-right: 2px solid rgba(0,0,0,0.2);
+}
+
+/* Sidebar text */
+[data-testid="stSidebar"] * {
+    color: #1e293b !important;
+}
+
+/* Headings */
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: #020617 !important;
+    font-weight: bold;
+}
+
 /* Slider text */
 [data-testid="stSidebar"] .stSlider {
-    color: white !important;
+    color: #020617 !important;
 }
 
 /* Alert styles */
@@ -139,6 +166,31 @@ input, textarea {
     color: white !important;
     border: 1px solid #00f5ff !important;
 }
+/* 🔥 Remove white top header */
+header {
+    background: transparent !important;
+}
+
+/* Remove Streamlit toolbar background */
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* Remove white bar completely */
+[data-testid="stToolbar"] {
+    right: 2rem;
+}
+
+/* Hide "running / connecting" bar */
+[data-testid="stStatusWidget"] {
+    display: none !important;
+}
+
+/* Optional: remove top padding */
+.block-container {
+    padding-top: 1rem !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
