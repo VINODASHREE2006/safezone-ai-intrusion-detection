@@ -1,0 +1,25 @@
+{
+  "video": "videos/demo_construction.mp4",
+  "fps": 20,
+  "duration_s": 28.0,
+  "intrusions": [
+    {
+      "worker": 2,
+      "zone": "Machinery Zone",
+      "start": 6.35,
+      "end": 20.65
+    },
+    {
+      "worker": 1,
+      "zone": "Excavation Zone",
+      "start": 8.45,
+      "end": 26.05
+    },
+    {
+      "worker": 3,
+      "zone": "Material Storage",
+      "start": 12.0,
+      "end": 19.25
+    }
+  ]
+}

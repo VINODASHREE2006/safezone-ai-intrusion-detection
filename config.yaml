@@ -1,0 +1,114 @@
+# =====================================================================
+# Construction Site Restricted Zone Intrusion Detection
+# Central configuration - every tunable parameter lives here.
+# =====================================================================
+
+video:
+  target_width: 640
+  target_height: 360
+  overlay_label: "CCTV LIVE FEED - CONSTRUCTION SITE"
+  output_fps: 20
+  # Used when the source video has no readable FPS
+  fallback_fps: 20
+
+# ---------------------------------------------------------------------
+# Stage 1: Motion detection (region proposal)
+# ---------------------------------------------------------------------
+motion:
+  history: 500
+  var_threshold: 32
+  detect_shadows: true
+  shadow_value: 127          # MOG2 marks shadows with this grey value
+  binary_threshold: 200      # everything above -> hard foreground
+  # Zone-aware adaptive background learning (see README > Innovation)
+  learning_rate_normal: 0.005      # outside hazardous zones: learn normally
+  learning_rate_hazard: 0.00005    # inside hazardous zones: near-frozen
+  morph_open_kernel: [3, 3]
+  morph_close_kernel: [9, 9]
+  dilate_iterations: 2
+  min_contour_area: 400
+  max_contour_area_ratio: 0.55     # reject blobs covering >55% of frame
+
+# ---------------------------------------------------------------------
+# Stage 2: Worker (human) classification - HOG + linear SVM
+# ---------------------------------------------------------------------
+detection:
+  hog_win_stride: [8, 8]
+  hog_padding: [16, 16]
+  hog_scale: 1.05
+  hog_hit_threshold: -0.35   # lower = more sensitive (default 0.0)
+  roi_padding: 24            # pixels of context added around a motion blob
+  min_person_area: 700
+  min_box_height: 45
+  aspect_ratio_min: 1.5      # height / width
+  aspect_ratio_max: 4.5
+  # Blobs that fail HOG but still look person-shaped -> UNKNOWN (no alert)
+  unknown_aspect_min: 1.2
+  unknown_aspect_max: 5.5
+  nms_overlap: 0.30
+  # Trim the ~15% padding baked into the default HOG detection window so the
+  # foot point lands on the ground, not below it.
+  hog_box_shrink:
+    width: 0.60
+    height: 0.72
+    top_offset: 0.13
+
+# ---------------------------------------------------------------------
+# Stage 3: Centroid tracking
+# ---------------------------------------------------------------------
+tracking:
+  max_distance: 90           # px, centroid association threshold
+  max_disappeared: 12        # frames a normal track survives without a match
+  presence_memory_frames: 45 # frames a track inside a hazard zone survives
+  min_hits_to_confirm: 2     # consecutive detections before a track is shown
+  bbox_smoothing: 0.55       # EMA on matched boxes (1.0 = no smoothing)
+  duplicate_distance: 45     # px; new box this close to a track = duplicate
+
+# ---------------------------------------------------------------------
+# Stage 4: Debounced intrusion logic + severity
+# ---------------------------------------------------------------------
+intrusion:
+  entry_debounce_frames: 3   # K frames inside before an intrusion is declared
+  exit_debounce_frames: 3    # K frames outside before it is closed
+  warning_seconds: 3.0       # < 3 s effective  -> WARNING
+  alert_seconds: 6.0         # 3-6 s effective  -> ALERT ; > 6 s -> CRITICAL
+  use_risk_weighting: true   # effective_time = duration * zone weight
+  zone_risk_weight:
+    LOW: 1.0
+    MEDIUM: 1.5
+    HIGH: 2.0
+
+# ---------------------------------------------------------------------
+# Hazardous zones. Points are NORMALISED (0-1) so they scale to any
+# resolution. Risk: LOW | MEDIUM | HIGH
+# ---------------------------------------------------------------------
+zones:
+  - name: "Excavation Zone"
+    risk: "HIGH"
+    points: [[0.03, 0.52], [0.34, 0.46], [0.44, 0.99], [0.02, 0.99]]
+
+  - name: "Machinery Zone"
+    risk: "MEDIUM"
+    points: [[0.56, 0.44], [0.96, 0.44], [0.96, 0.82], [0.56, 0.82]]
+
+  - name: "Material Storage"
+    risk: "LOW"
+    points: [[0.30, 0.28], [0.62, 0.28], [0.62, 0.44], [0.30, 0.44]]
+
+# ---------------------------------------------------------------------
+# Display
+# ---------------------------------------------------------------------
+display:
+  show_motion_mask: false
+  show_zone_fill: true
+  zone_fill_alpha: 0.22
+  colors:                    # BGR
+    HIGH:     [0, 0, 255]      # red
+    MEDIUM:   [0, 140, 255]    # orange
+    LOW:      [0, 230, 255]    # yellow
+    WARNING:  [0, 230, 255]
+    ALERT:    [0, 140, 255]
+    CRITICAL: [0, 0, 255]
+    WORKER:   [0, 255, 0]
+    NON_WORKER: [180, 180, 180]
+    UNKNOWN:  [255, 200, 0]
