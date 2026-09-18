@@ -114,6 +114,31 @@ h1 {
     color: white;
     font-weight: bold;
 }
+/* ===== ADD BELOW YOUR EXISTING CSS ===== */
+
+/* File uploader button */
+[data-testid="stFileUploader"] button {
+    background: linear-gradient(90deg, #00f5ff, #7c3aed) !important;
+    color: white !important;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* Download buttons */
+.stDownloadButton > button {
+    background: linear-gradient(90deg, #22c55e, #16a34a) !important;
+    color: white !important;
+    border-radius: 8px;
+    font-weight: bold;
+    border: none;
+}
+
+/* Input fields fix */
+input, textarea {
+    background-color: #1e293b !important;
+    color: white !important;
+    border: 1px solid #00f5ff !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
