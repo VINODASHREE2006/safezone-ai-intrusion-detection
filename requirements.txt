@@ -1,13 +1,13 @@
 # Core CV + numerics
 opencv-python-headless==4.8.1.78
-numpy>=1.24,<3.0
+numpy==1.26.4
 
 # Config + data
-PyYAML>=6.0
-pandas>=2.0
+PyYAML==6.0.1
+pandas==2.2.2
 
 # Dashboard
-streamlit>=1.32
+streamlit==1.32.0
 
 # Optional: only needed if you want browser-friendly H.264 output.
 # ffmpeg is a SYSTEM package, not a pip one:
